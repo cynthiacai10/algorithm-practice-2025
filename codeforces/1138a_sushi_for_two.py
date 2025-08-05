@@ -13,25 +13,22 @@ def sushi_for_two(sushi):
     if len(sushi) < 2:
         return 0
     
-    curr_left = 1 # 1 or 2
-    curr_left_count, prev_left_count = 0, 0
-  
+    prev_count = 0 # no previous group yet
+    count = 1 # current group size
     max_size = 0
 
-    for i in range(0, len(sushi)): # the break        
-        # track the length of left part
-        if sushi[i] != curr_left or i == len(sushi)-1: # switching point
-            # count the size
-            size = 2 * min(prev_left_count, curr_left_count)
-            max_size = max(size, max_size)
-
-            # move on, restart counting
-            curr_left = sushi[i]
-            prev_left_count = curr_left_count
-            curr_left_count = 1
+    # Group the sushi into consecutive same elements
+    for i in range(1, len(sushi)):
+        if sushi[i] != sushi[i-1]:
+            # switch point: process group
+            max_size = max(max_size, 2*min(count, prev_count))
+            prev_count = count
+            count = 1 # restart the count
         else:
-            # continue counting
-            curr_left_count += 1
+            count += 1
+    
+    # process the final group pair
+    max_size = max(max_size, 2 * min(prev_count, count))
     
     return max_size
 
@@ -45,11 +42,12 @@ def test():
                 [1, "2"]
                 ]
     for length, sushi in test_set:
-        sushi_lst = list(map(int, sushi))
+        sushi_lst = list(map(int, sushi.split()))
+    
         if length != len(sushi_lst):
             print("Input eroor")
             return 0
-        
+            
         print("Input sushi:", sushi_lst)
         res = sushi_for_two(sushi_lst)
         print("Result:",res)
@@ -62,4 +60,4 @@ def main():
 
 
 if __name__ == "__main__":
-    test()
+    main()
